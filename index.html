@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1728">
+  <meta name="description" content="MobilityHub: simulador experimental con semáforo de ofertas, meta diaria, recomendaciones habladas y datos simulados de pasajeros.">
+  <title>MobilityHub · MVP 03 · Asistente por voz (simulación)</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#091323;color:#f5f8ff;color-scheme:dark}
+    *{box-sizing:border-box}body{margin:0;min-width:0;line-height:1.46}button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}
+    .shell{width:100%;max-width:790px;margin:auto;padding:22px 15px 50px}.tag{letter-spacing:.12em;color:#8be7da;font-weight:800;font-size:.75rem}
+    h1{font-size:clamp(1.8rem,5vw,2.4rem);letter-spacing:-.04em;margin:5px 0 5px}h2{font-size:1.15rem;margin:0 0 11px}
+    p{margin:8px 0}.sub,.muted{color:#a9bcd3}.sub{font-size:.93rem;max-width:65ch}
+    .card{border:1px solid #2a3c55;border-radius:17px;background:#142339;padding:16px;margin-top:15px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.triple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+    label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:#c8d9ec;font-weight:650;min-width:0}
+    input,select{width:100%;border:1px solid #3a516e;background:#0a192d;border-radius:9px;padding:10px;color:#fff;min-height:46px;font-size:16px}
+    input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #79e3d0;outline-offset:2px}
+    .large{font-size:1.95rem;font-weight:800;letter-spacing:-.035em;margin:3px 0 0;overflow-wrap:anywhere}
+    .kpi{padding:12px;border:1px solid #3c5267;background:#0d1d33;border-radius:12px;min-width:0}
+    .kpi small{display:block;color:#afc1d5;font-size:.75rem}.kpi strong{display:block;font-size:1.21rem;margin-top:4px;overflow-wrap:anywhere}
+    .progress{height:10px;background:#30415a;border-radius:20px;overflow:hidden;margin:9px 0}.fill{height:100%;width:39%;background:#6adeca;transition:width .15s}
+    .offer{display:grid;grid-template-columns:23px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px;border-radius:13px;border:1px solid #344861;background:#0e2036;margin:9px 0}
+    .dot{width:22px;height:22px;border-radius:50%;background:#9daabe;flex-shrink:0}.offer-title{font-weight:800}.offer-meta{font-size:.77rem;color:#b2c7de;margin-top:3px;overflow-wrap:anywhere}
+    .price{font-weight:850;font-size:1.09rem;text-align:right;white-space:nowrap}.tiny{font-size:.72rem;color:#afc1d5;white-space:normal;text-align:right}
+    .recommend{color:#c7f9ed;font-weight:750}.guide{font-size:.86rem;color:#c5d4e4}.note{font-size:.78rem;color:#a9bcd3;line-height:1.55}
+    .offers-edit{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:end}
+    .offers-edit label{font-size:.72rem}.offers-edit input{font-size:16px;padding:8px;min-width:0}
+    .edit-row{border-bottom:1px solid #35465d;padding:11px 0}.edit-row:last-child{border-bottom:0}
+    .pill{display:inline-block;padding:3px 8px;border-radius:40px;background:#243b52;font-size:.73rem;color:#d5e9f5}
+    .ghost{background:#253950;color:#f2f7ff;border:1px solid #3b5572;border-radius:10px;padding:10px 13px;font-size:.86rem;font-weight:750;min-height:44px}
+    .button-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:13px}
+    .primary{background:#69dfc9;color:#082323;border:0;border-radius:10px;padding:12px 16px;font-weight:800;min-height:47px}
+    .invalid{color:#ffb8b2;font-size:.82rem;margin-top:9px}.divider{border-top:1px solid #35465d;margin:15px 0}
+    [hidden]{display:none!important}
+    .sim-confirm{border:2px solid #56d0b4;background:#123d43;border-radius:13px;margin-top:12px;padding:13px;color:#f6fffd}
+    .sim-confirm h3{font-size:1.03rem;margin:0 0 9px}
+    .sim-before-after{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .sim-before-after>div{border:1px solid #4f837c;border-radius:10px;padding:10px}
+    .sim-before-after strong{font-size:1.18rem;display:block;overflow-wrap:anywhere}
+    .sim-before-after small{font-size:.75rem;display:block;color:#c7f5eb}
+    details>summary{cursor:pointer;font-weight:750;min-height:44px;display:flex;align-items:center;list-style:auto}details[open]>summary{margin-bottom:7px}
+    .voice-result{margin-top:12px;border-radius:12px;padding:13px;border:1px solid #416681;background:#102c43;min-height:57px}.voice-state{font-size:.84rem;color:#c9e8f9}.voice-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.voice-controls button{min-height:50px}.secondary{border:1px solid #59758e;border-radius:11px;padding:12px 10px;background:#233a52;color:#f8fbff;font-weight:750}.secondary:disabled,.primary:disabled{opacity:.54;cursor:not-allowed}.voice-quote{line-height:1.6;padding:14px;border-left:3px solid #8be7da;background:#0b1b2d;border-radius:8px;font-size:.98rem}.safe{display:inline-block;border-radius:999px;border:1px solid #365d5a;padding:4px 9px;color:#91e3d5;font-size:.76rem;font-weight:700;margin-top:4px}
+    @media(max-width:560px){.offers-edit{grid-template-columns:repeat(2,minmax(0,1fr))}.offers-edit label:first-child{grid-column:1}.triple{grid-template-columns:1fr 1fr}.triple label:last-child{grid-column:1 / -1}.price{font-size:1rem}.shell{padding:18px 12px 40px}}
+    @media(max-width:350px){.grid{grid-template-columns:1fr}.triple{grid-template-columns:1fr}.triple label:last-child{grid-column:auto}.offer{grid-template-columns:20px minmax(0,1fr)}.price{grid-column:2;text-align:left}}
+    @media(prefers-reduced-motion:reduce){.fill{transition:none}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <div class="tag">MOBILITYHUB · MVP 03 · VOZ EXPERIMENTAL</div>
+  <h1>Elegí mejor. Trabajá menos.</h1>
+  <p class="sub">Probá el semáforo de rentabilidad, tu <strong>meta diaria</strong> y una <strong>recomendación por voz</strong>. Todas las ofertas y calificaciones son ficticias.</p>
+  <span class="safe">Sin cuentas ni servidor de MobilityHub · Micrófono opcional</span>
+
+  <section class="card" aria-labelledby="dailytitle">
+    <h2 id="dailytitle">1. Tu objetivo de hoy</h2>
+    <div class="grid">
+      <label>Meta mensual en mano ($)<input id="monthly" type="number" min="1" max="1000000000" step="10000" inputmode="decimal" value="1200000"></label>
+      <label>Días de trabajo al mes<input id="days" type="number" min="1" max="31" step="1" inputmode="numeric" value="26"></label>
+      <label>Horas transcurridas hoy, incluidas esperas<input id="elapsed" type="number" min="0" max="24" step="0.25" inputmode="decimal" value="3"></label>
+      <label>Ganancia neta acumulada hoy ($)<input id="earned" type="number" min="0" max="1000000000" step="500" inputmode="decimal" value="18000"></label>
+    </div>
+    <div class="divider"></div>
+    <div class="grid">
+      <div class="kpi"><small>Meta neta diaria</small><strong id="dailyGoal">$46.154</strong></div>
+      <div class="kpi"><small>Falta ganar hoy</small><strong id="remainingMoney">$28.154</strong></div>
+      <div class="kpi"><small>Horas restantes estimadas al ritmo actual</small><strong id="timeLeft">4 h 42 min</strong></div>
+      <div class="kpi"><small>Fin estimado de jornada</small><strong id="projectedFinish">7 h 42 min</strong></div>
+    </div>
+    <div class="progress" aria-hidden="true"><div id="goalProgress" class="fill"></div></div>
+    <p id="goalStatus" class="guide" aria-live="polite">A este ritmo podrías alcanzar tu meta antes de las 9 horas.</p>
+    <p id="dailyError" class="invalid" role="alert" hidden></p>
+    <p class="note">Meta de jornada: <strong>9 horas</strong> (hipótesis a validar frente a las 12 horas actuales). La proyección utiliza el rendimiento neto <em>realizado hasta el momento</em>, incluyendo esperas y tiempo sin pasajeros; no predice la demanda futura. Cargá manualmente la ganancia después de todos los gastos y comisiones.</p>
+  </section>
+
+  <section class="card" aria-labelledby="offerstitle">
+    <h2 id="offerstitle">2. Semáforo de ofertas</h2>
+    <p class="guide">Las tres ofertas y los datos de los pasajeros son <strong>ficticios</strong>. El orden se calcula por ganancia neta estimada por hora, no por el importe bruto del viaje.</p>
+    <div id="trafficLights" aria-live="polite"></div>
+    <p id="recommendation" class="recommend"></p>
+    <p id="offerError" class="invalid" role="alert" hidden></p>
+    <div class="button-row"><button id="simulateTrip" class="primary" type="button">Simular completar la mejor oferta</button></div>
+    <p id="simulateMessage" class="guide" aria-live="polite">Esta acción suma el viaje ficticio al progreso de tu jornada. El resultado aparecerá justo aquí, debajo del botón.</p>
+    <div id="simConfirm" class="sim-confirm" role="status" aria-live="polite" hidden>
+      <h3 id="simConfirmTitle">Viaje simulado</h3>
+      <div class="sim-before-after">
+        <div><small>Antes · ganancia neta</small><strong id="simEarnBefore">—</strong><small>Antes · horas trabajadas</small><strong id="simTimeBefore">—</strong></div>
+        <div><small>Ahora · ganancia neta</small><strong id="simEarnAfter">—</strong><small>Ahora · horas trabajadas</small><strong id="simTimeAfter">—</strong></div>
+      </div>
+      <p id="simConfirmRemaining" class="guide"></p>
+      <p class="note">El resultado también está actualizado en «Tu objetivo de hoy», arriba. No se abrió ni se aceptó ningún viaje real.</p>
+    </div>
+    <div class="divider"></div>
+    <details>
+      <summary>Modificar ofertas y costos</summary>
+      <div class="grid">
+        <label>Costo variable por km ($)<input id="costKm" type="number" min="0" max="1000000000" step="25" inputmode="decimal" value="250"></label>
+        <label>Tiempo de jornada con ofertas evaluables (%)<input id="occupancy" type="number" min="1" max="100" step="5" inputmode="decimal" value="75"></label>
+      </div>
+      <p class="note">El 75 % es un supuesto inicial, no un dato verificado. Se usa solamente para estimar el rendimiento mínimo exigible a cada oferta. El costo por km debe incluir combustible y desgaste del vehículo; no cargues nuevamente esos costos en el importe ofrecido.</p>
+      <div class="edit-row"><div class="pill">Uber · Oferta A</div><div class="offers-edit">
+        <label>Oferta al conductor ($)<input id="aPay" type="number" min="0" step="100" inputmode="decimal" value="10000"></label>
+        <label>Km hasta pasajero<input id="aPick" type="number" min="0" step="0.5" inputmode="decimal" value="1"></label>
+        <label>Km del viaje<input id="aTrip" type="number" min="0" step="0.5" inputmode="decimal" value="3"></label>
+        <label>Minutos totales<input id="aMins" type="number" min="1" step="1" inputmode="decimal" value="20"></label>
+      </div></div>
+      <div class="edit-row"><div class="pill">DiDi · Oferta B</div><div class="offers-edit">
+        <label>Oferta al conductor ($)<input id="bPay" type="number" min="0" step="100" inputmode="decimal" value="12000"></label>
+        <label>Km hasta pasajero<input id="bPick" type="number" min="0" step="0.5" inputmode="decimal" value="3"></label>
+        <label>Km del viaje<input id="bTrip" type="number" min="0" step="0.5" inputmode="decimal" value="10"></label>
+        <label>Minutos totales<input id="bMins" type="number" min="1" step="1" inputmode="decimal" value="40"></label>
+      </div></div>
+      <div class="edit-row"><div class="pill">Cabify · Oferta C</div><div class="offers-edit">
+        <label>Oferta al conductor ($)<input id="cPay" type="number" min="0" step="100" inputmode="decimal" value="5500"></label>
+        <label>Km hasta pasajero<input id="cPick" type="number" min="0" step="0.5" inputmode="decimal" value="2"></label>
+        <label>Km del viaje<input id="cTrip" type="number" min="0" step="0.5" inputmode="decimal" value="12"></label>
+        <label>Minutos totales<input id="cMins" type="number" min="1" step="1" inputmode="decimal" value="45"></label>
+      </div></div>
+      <p class="note">El importe es el <strong>pago al conductor después de la comisión de la plataforma</strong>. Si ingresás la tarifa pagada por el pasajero, los resultados sobreestimarán la ganancia. Los minutos totales incluyen el trayecto hasta buscar al pasajero y el viaje.</p>
+    </details>
+  </section>
+
+
+  <section class="card" aria-labelledby="voicetitle">
+    <h2 id="voicetitle">3. Asistente de voz · Prueba de frases naturales (v3.1)</h2>
+    <p class="guide">La aplicación puede <strong>leer en voz alta</strong> la mejor oferta y, si tu navegador lo permite, reconocer respuestas breves. Probalo <strong>con el vehículo detenido</strong>.</p>
+    <div id="spokenOffer" class="voice-quote" aria-live="polite">Preparando recomendación simulada…</div>
+    <div class="voice-controls">
+      <button class="primary" type="button" id="hearOffer">🔊 Escuchar recomendación</button>
+      <button class="secondary" type="button" id="sayAnswer">🎙 Responder por voz</button>
+      <button class="secondary" type="button" id="repeatOffer">↺ Repetir</button>
+      <button class="secondary" type="button" id="stopVoice">■ Detener audio</button>
+    </div>
+    <div class="voice-result" role="status" aria-live="polite"><strong id="voiceStatus">Tocá «Escuchar recomendación» para comenzar.</strong><p id="voiceDetail" class="voice-state">Después podés decir «Sí, confirmo», «Quiero elegir ese viaje», «No» o «Repetir».</p><p id="voiceTranscript" class="voice-state" style="margin-top:10px">Última frase escuchada: ninguna todavía.</p></div>
+    <details style="margin-top:15px">
+      <summary>Si el micrófono no funciona, probar respuestas manualmente</summary>
+      <div class="button-row">
+        <button type="button" id="fakeYes" class="ghost">Simular «Sí, confirmo»</button>
+        <button type="button" id="fakeNo" class="ghost">Simular «No»</button>
+      </div>
+      <p class="note">Los botones ayudan a probar la lógica aunque Chrome no habilite el reconocimiento de voz en archivos locales.</p>
+    </details>
+    <p class="note"><strong>Privacidad y límites:</strong> MobilityHub no envía datos a ningún servidor propio. Sin embargo, si activás el micrófono, el reconocimiento integrado de Chrome puede utilizar servicios externos y necesitar internet. El navegador puede pedirte permiso. La respuesta «Sí» registra <em>solo una confirmación ficticia</em>: no abre aplicaciones, no acepta viajes ni modifica tu ganancia diaria. Las calificaciones de pasajeros no son garantías de seguridad.</p>
+  </section>
+
+  <section class="card" aria-labelledby="nexttitle">
+    <h2 id="nexttitle">4. Qué se comprobó y qué falta</h2>
+    <p class="guide"><strong>Comprobado:</strong> fórmulas en pruebas con datos ficticios y funcionamiento de la primera versión en tu Android. La versión anterior sumó semáforo y proyección de horas. La voz hablada y el reconocimiento de una orden se probaron en Android usando HTTPS; ahora validamos más expresiones de respuesta.</p>
+    <p class="guide"><strong>Pendiente:</strong> que un conductor real gane lo mismo en 9 horas, comprobar costos y tiempos reales, capturar ofertas y calificaciones reales de otras apps, probar variantes de órdenes de voz, confiabilidad en Android, permisos, seguridad y restricciones al conducir.</p>
+    <div class="button-row"><button id="reset" type="button" class="ghost">Restablecer toda la simulación</button></div>
+  </section>
+  <p class="note">Motor de cálculo experimental. La ganancia neta por oferta = pago que recibe el conductor − costo/km × kilómetros totales. Rentabilidad por hora de oferta = ganancia neta × 60 / minutos totales. Umbral aproximado por hora de oferta = meta diaria neta / (9 h × fracción de tiempo con ofertas evaluables). Si ninguna oferta lo supera, ninguna aparece verde. El modelo no incluye peajes, impuestos, gastos fijos no contabilizados, demanda futura ni efectos en tasas de aceptación. No utilizar ni manipular el teléfono mientras se conduce. Las pruebas de voz deben hacerse con el vehículo detenido.</p>
+</main>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const ars=x=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(x);
+const num=x=>new Intl.NumberFormat('es-AR',{maximumFractionDigits:1}).format(x);
+const models=[{id:'a',name:'Uber'},{id:'b',name:'DiDi'},{id:'c',name:'Cabify'}];
+const passengers={
+ Uber:{rating:'4,8 de 5',trips:null,verification:null},
+ DiDi:{rating:'4,9 de 5',trips:230,verification:'Insignia de verificación simulada'},
+ Cabify:{rating:null,trips:null,verification:null}
+};
+
+const initial={monthly:1200000,days:26,elapsed:3,earned:18000,costKm:250,occupancy:75,aPay:10000,aPick:1,aTrip:3,aMins:20,bPay:12000,bPick:3,bTrip:10,bMins:40,cPay:5500,cPick:2,cTrip:12,cMins:45};
+let winningOffer=null;let dailyGoal=null;
+const keys=Object.keys(initial);
+const read=(name)=>{const el=$(name);const s=el.value.trim().replace(',','.');return s===''?NaN:Number(s)};
+const valid=(name,min,max)=>{const n=read(name);return Number.isFinite(n)&&n>=min&&n<=max};
+const duration=(hours)=>{if(!Number.isFinite(hours)||hours<0||hours>10000)return '—';const total=Math.round(hours*60);return Math.floor(total/60)+' h '+(total%60)+' min'};
+function updateDay(){
+ const ok=valid('monthly',1,1e9)&&valid('days',1,31)&&Number.isInteger(read('days'))&&valid('elapsed',0,24)&&valid('earned',0,1e9);
+ $('dailyError').hidden=ok;
+ if(!ok){$('dailyError').textContent='Revisá la meta, los días y los importes. Las horas deben estar entre 0 y 24.';['dailyGoal','remainingMoney','timeLeft','projectedFinish'].forEach(id=>$(id).textContent='—');$('goalStatus').textContent='Sin proyección hasta corregir los datos.';$('goalProgress').style.width='0%';dailyGoal=null;return;}
+ dailyGoal=read('monthly')/read('days');
+ const earned=read('earned'),elapsed=read('elapsed'),remaining=Math.max(0,dailyGoal-earned);
+ $('dailyGoal').textContent=ars(dailyGoal);
+ $('remainingMoney').textContent=ars(remaining);
+ $('goalProgress').style.width=Math.min(100,earned/dailyGoal*100)+'%';
+ if(remaining<=0){$('timeLeft').textContent='0 h';$('projectedFinish').textContent=duration(elapsed);$('goalStatus').textContent='Meta neta diaria alcanzada. Jornada transcurrida: '+duration(elapsed)+'.';return;}
+ if(elapsed===0||earned===0){$('timeLeft').textContent='Sin datos';$('projectedFinish').textContent='Sin estimación';$('goalStatus').textContent='Para proyectar las horas restantes, necesitás tener tiempo e ingresos netos acumulados.';return;}
+ const speed=earned/elapsed;const remainHours=remaining/speed;const totalHours=elapsed+remainHours;
+ $('timeLeft').textContent=duration(remainHours);
+ $('projectedFinish').textContent=duration(totalHours);
+ const need=elapsed<9?remaining/(9-elapsed):null;
+ if(totalHours<=9){$('goalStatus').textContent='A este ritmo podrías llegar a la meta dentro de las 9 horas. Proyección orientativa, no garantía.';}
+ else if(need!==null){$('goalStatus').textContent='Para llegar en 9 horas, desde ahora necesitarías '+ars(need)+'/h netos de jornada. Ritmo observado: '+ars(speed)+'/h.';}
+ else {$('goalStatus').textContent='Ya transcurrieron 9 horas y falta alcanzar la meta. Registrá el resultado real para evaluar el objetivo.';}
+}
+function updateOffers(){
+ const goodGoal=dailyGoal!==null&&valid('occupancy',1,100)&&valid('costKm',0,1e9);
+ let good=goodGoal;
+ for(const m of models){good=good&&valid(m.id+'Pay',0,1e9)&&valid(m.id+'Pick',0,1e9)&&valid(m.id+'Trip',0,1e9)&&valid(m.id+'Mins',1,1e9)&&read(m.id+'Pick')+read(m.id+'Trip')>0;}
+ $('offerError').hidden=good;
+ if(!good){$('offerError').textContent='Completá valores válidos para comparar: distancias, minutos, pago, costos y meta diaria.';$('trafficLights').replaceChildren();$('recommendation').textContent='';winningOffer=null;$('simulateTrip').disabled=true;return;}
+ const minimum=dailyGoal/(9*(read('occupancy')/100));
+ const offers=models.map(m=>{
+ const km=read(m.id+'Pick')+read(m.id+'Trip');
+ const expense=km*read('costKm');const net=read(m.id+'Pay')-expense;
+ return {name:m.name,net,km,mins:read(m.id+'Mins'),hourly:net*60/read(m.id+'Mins')};
+ });
+ offers.sort((x,y)=>y.hourly-x.hourly);
+ const top=offers[0];winningOffer=top.hourly>=minimum?top:null;
+ const list=document.createDocumentFragment();
+ for(const o of offers){const green=o===top&&o.hourly>=minimum;const yellow=o.hourly>=minimum&&!green;
+ const color=green?'#16a34a':yellow?'#eab308':'#ef4444';
+ const row=document.createElement('div');row.className='offer';
+ const dot=document.createElement('span');dot.className='dot';dot.style.background=color;dot.setAttribute('aria-label',green?'Verde':yellow?'Amarillo':'Rojo');
+ const content=document.createElement('div');
+ const label=document.createElement('div');label.className='offer-title';label.textContent=o.name+(green?' · RECOMENDADO':'');
+ const sub=document.createElement('div');sub.className='offer-meta';const passenger=passengers[o.name];
+ sub.textContent=ars(o.net)+' netos estimados · '+num(o.km)+' km · '+num(o.mins)+' min';
+ const passengerLine=document.createElement('div');passengerLine.className='offer-meta';
+ passengerLine.textContent=passenger.rating?'★ '+passenger.rating+' (ficticia)'+(passenger.trips?' · '+passenger.trips+' viajes ficticios':''):'Calificación del pasajero: no disponible';
+ content.append(label,sub,passengerLine);
+ const right=document.createElement('div');right.className='price';right.textContent=ars(o.hourly)+'/h';
+ row.append(dot,content,right);list.append(row);
+ }
+ $('trafficLights').replaceChildren(list);
+ $('simulateTrip').disabled=!winningOffer;
+ $('simulateTrip').title=winningOffer?'Sumar un viaje ficticio a las horas e ingresos de hoy':'No hay oferta recomendada que supere el umbral';
+ if(winningOffer){$('recommendation').textContent='Conviene '+top.name+': deja '+ars(top.net)+' estimados en '+num(top.mins)+' minutos. Objetivo mínimo orientativo por hora de oferta: '+ars(minimum)+'.';}
+ else{$('recommendation').textContent='Ninguna oferta alcanza el umbral estimado de '+ars(minimum)+'/h de oferta. No hay semáforo verde.';}
+}
+function update(){updateDay();updateOffers()}
+keys.forEach(k=>{$(k).addEventListener('input',()=>{$('simConfirm').hidden=true;update()});$(k).addEventListener('change',()=>{$('simConfirm').hidden=true;update()});});
+$('simulateTrip').addEventListener('click',()=>{
+ if(!winningOffer)return;
+ const offer=winningOffer;const elapsed=read('elapsed');const earned=read('earned');const delta=offer.mins/60;
+ if(elapsed+delta>24){$('simulateMessage').textContent='La jornada simulada superaría las 24 horas; reiniciá o corregí las horas.';return;}
+ const newElapsed=elapsed+delta;
+ const newEarned=Math.max(0,earned+offer.net);
+ $('elapsed').value=newElapsed.toFixed(4);$('earned').value=newEarned.toFixed(2);
+ update();
+ $('simulateMessage').textContent='✓ Simulación registrada: viaje de '+offer.name+'. El resumen del día se actualizó.';
+ $('simConfirmTitle').textContent='✓ Sumaste '+ars(offer.net)+' en '+num(offer.mins)+' minutos ('+offer.name+')';
+ $('simEarnBefore').textContent=ars(earned);
+ $('simEarnAfter').textContent=ars(newEarned);
+ $('simTimeBefore').textContent=duration(elapsed);
+ $('simTimeAfter').textContent=duration(newElapsed);
+ $('simConfirmRemaining').textContent='Para tu meta diaria todavía faltan '+$('remainingMoney').textContent+'. Horas restantes al ritmo acumulado: '+$('timeLeft').textContent+'.';
+ $('simConfirm').hidden=false;
+});
+$('reset').addEventListener('click',()=>{for(const k of keys)$(k).value=initial[k];$('simConfirm').hidden=true;$('simulateMessage').textContent='La simulación se restableció con los valores de ejemplo.';update();refreshVoiceText();});
+// Voz: solo funciones nativas del navegador, ninguna conexión con las plataformas.
+const SpeechRecognitionAPI=window.SpeechRecognition||window.webkitSpeechRecognition;
+const synthesisAvailable=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+let recognition=null;
+let recognitionActive=false;
+function voiceOffer(){
+ if(!winningOffer)return 'En este momento no hay ofertas que alcancen tu objetivo mínimo estimado de rentabilidad. No recomiendo ninguna.';
+ const o=winningOffer;
+ const p=passengers[o.name];
+ let descriptor='La calificación del pasajero no está disponible en esta simulación.';
+ if(p.rating){descriptor='Calificación ficticia del pasajero: '+p.rating+' estrellas.'+(p.trips?' Cantidad simulada: '+p.trips+' viajes.':'');}
+ return 'MobilityHub. Recomiendo la oferta simulada de '+o.name+'. Ganancia neta estimada: '+Math.round(o.hourly).toLocaleString('es-AR')+' pesos por hora. El viaje dejaría '+Math.round(o.net).toLocaleString('es-AR')+' pesos en '+Math.round(o.mins)+' minutos. '+descriptor+' ¿Querés seleccionarla en esta simulación? Podés decir sí, quiero elegir ese viaje, no o repetir.';
+}
+function refreshVoiceText(){
+ $('spokenOffer').textContent=voiceOffer();
+}
+function setVoiceStatus(main,detail){$('voiceStatus').textContent=main;$('voiceDetail').textContent=detail||'';}
+function stopSound(){if(synthesisAvailable)window.speechSynthesis.cancel();}
+function speakOffer(){
+ refreshVoiceText();
+ if(!synthesisAvailable){setVoiceStatus('Audio no disponible en este navegador.','Podés leer la recomendación y probar los botones de respuesta simulada.');return;}
+ stopSound();
+ const utter=new SpeechSynthesisUtterance(voiceOffer());
+ utter.lang='es-AR';utter.rate=0.96;utter.pitch=1;
+ const available=window.speechSynthesis.getVoices();
+ const esVoice=available.find(v=>v.lang.toLowerCase()==='es-ar')||available.find(v=>v.lang.toLowerCase().startsWith('es'));
+ if(esVoice)utter.voice=esVoice;
+ utter.onstart=()=>setVoiceStatus('Reproduciendo recomendación hablada…','Cuando termine, podés probar «Responder por voz».');
+ utter.onend=()=>setVoiceStatus('Terminó la recomendación.','Tocá «Responder por voz» y decí «Quiero elegir ese viaje», «Sí, confirmo», «No» o «Repetir».');
+ utter.onerror=()=>setVoiceStatus('Tu navegador no pudo reproducir el audio.','Usá el texto visible o probá el audio desde Chrome.');
+ try{window.speechSynthesis.speak(utter);setVoiceStatus('Iniciando audio…','Si Chrome no reproduce sonido, comprobá el volumen multimedia.');}
+ catch(e){setVoiceStatus('No se pudo iniciar el audio.','Probá con Chrome y el volumen multimedia activado.');}
+}
+function answer(action,origin){
+ const label=origin==='voz'?'Respuesta reconocida por voz':'Respuesta de prueba manual';
+ if(action==='repeat'){setVoiceStatus(label+': repetir.','Volveré a leer la recomendación.');speakOffer();return;}
+ if(action==='yes'){
+   if(winningOffer){setVoiceStatus(label+': sí, confirmo.','SELECCIÓN SIMULADA: '+winningOffer.name+'. No se abrió otra app ni se aceptó viaje real. Para registrar ganancias ficticias usá el botón «Simular completar la mejor oferta».');}
+   else{setVoiceStatus('No hay oferta recomendada.','Ninguna oferta supera el umbral mínimo actual.');}
+ }else if(action==='no')setVoiceStatus(label+': no.','Se descartó la recomendación únicamente en esta simulación. No cambió ninguna cuenta.');
+ else setVoiceStatus('No entendí la intención de la frase.','Probá decir «Quiero elegir ese viaje», «Sí, confirmo», «No» o «Repetir». También podés usar los botones de prueba.');
+}
+function interpret(phrase){
+ // Interpretación local de órdenes limitadas. La voz NO acepta viajes reales.
+ const clean=String(phrase||'').toLocaleLowerCase('es-AR')
+   .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+   .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+ if(!clean)return 'other';
+ // Prioridad a las negaciones para no aprobar accidentalmente "no quiero".
+ if(/\b(no|nunca|jamas)\b/.test(clean) ||
+    /\b(cancelar|cancela|descartar|descarta|rechazar|rechazo|no gracias|mejor no)\b/.test(clean))return 'no';
+ if(/\b(repetir|repite|repetilo|repetime|otra vez|de nuevo|decilo otra vez|quiero escucharlo|repasa)\b/.test(clean))return 'repeat';
+ if(/\b(si|confirmo|acepto|selecciono|selecciona|seleccionar|afirmativo|dale|ok|okay|vale)\b/.test(clean))return 'yes';
+ if(/\b(quiero|voy a|vamos a|me quedo|elegi|elijo|eligiendo|toma|tomar|tomalo|tomarla|elige|elegir)\b/.test(clean) &&
+    /\b(viaje|oferta|ese|esa|este|esta|recomendad[ao]|di ?di|uber|cabify)\b/.test(clean))return 'yes';
+ if(/\b(me quedo con esa|me quedo con ese|vamos con esa|vamos con ese|la elijo|lo elijo)\b/.test(clean))return 'yes';
+ return 'other';
+}
+function beginRecognition(){
+ if(!SpeechRecognitionAPI){setVoiceStatus('Reconocimiento de voz no disponible aquí.','Chrome puede requerir que la aplicación se publique en una página segura HTTPS. Usá las respuestas manuales por ahora.');return;}
+ if(recognitionActive){setVoiceStatus('El micrófono ya está escuchando.','Decí «Quiero elegir ese viaje», «Sí, confirmo», «No» o «Repetir».');return;}
+ stopSound();
+ try{
+  recognition=new SpeechRecognitionAPI();recognition.lang='es-AR';recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;
+  recognition.onstart=()=>{recognitionActive=true;setVoiceStatus('Escuchando una respuesta breve…','Decí «Quiero elegir ese viaje», «Sí, confirmo», «No» o «Repetir». No es un sistema de escucha permanente.');};
+  recognition.onresult=e=>{const phrase=e.results&&e.results[0]&&e.results[0][0]?e.results[0][0].transcript:'';$('voiceTranscript').textContent='Última frase escuchada: «'+phrase+'»';answer(interpret(phrase),'voz');};
+  recognition.onerror=e=>{let text='El navegador no pudo reconocer la respuesta.';
+    if(e.error==='not-allowed'||e.error==='service-not-allowed')text='Micrófono denegado o restringido por Chrome.';
+    else if(e.error==='network')text='No hay acceso al servicio de reconocimiento de voz del navegador.';
+    else if(e.error==='no-speech')text='No se detectó ninguna respuesta.';
+    setVoiceStatus(text,'Podés usar los botones de respuesta manual. No necesitás conectar Uber, DiDi o Cabify.');};
+  recognition.onend=()=>{recognitionActive=false;};
+  recognition.start();
+ }catch(e){recognitionActive=false;setVoiceStatus('Chrome no pudo activar el micrófono desde este archivo.','El reconocimiento puede necesitar permiso y una página HTTPS. Podés probar las respuestas manuales.');}
+}
+$('hearOffer').addEventListener('click',speakOffer);
+$('repeatOffer').addEventListener('click',speakOffer);
+$('sayAnswer').addEventListener('click',beginRecognition);
+$('fakeYes').addEventListener('click',()=>answer('yes','manual'));
+$('fakeNo').addEventListener('click',()=>answer('no','manual'));
+$('stopVoice').addEventListener('click',()=>{stopSound();if(recognitionActive&&recognition)try{recognition.stop()}catch(e){}setVoiceStatus('Audio detenido.','Podés volver a escuchar la recomendación cuando quieras.');});
+keys.forEach(k=>{$(k).addEventListener('input',()=>{refreshVoiceText();});});
+if(!synthesisAvailable){$('hearOffer').disabled=true;$('repeatOffer').disabled=true;}
+if(!SpeechRecognitionAPI){$('sayAnswer').disabled=true;$('sayAnswer').title='Este navegador no ofrece reconocimiento de voz; probá los botones manuales.';}
+update();refreshVoiceText();
+})();
+</script>
+</body>
+</html>
