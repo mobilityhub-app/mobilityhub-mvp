@@ -41,15 +41,15 @@
     .sim-before-after strong{font-size:1.18rem;display:block;overflow-wrap:anywhere}
     .sim-before-after small{font-size:.75rem;display:block;color:#c7f5eb}
     details>summary{cursor:pointer;font-weight:750;min-height:44px;display:flex;align-items:center;list-style:auto}details[open]>summary{margin-bottom:7px}
-    .voice-result{margin-top:12px;border-radius:12px;padding:13px;border:1px solid #416681;background:#102c43;min-height:57px}.voice-state{font-size:.84rem;color:#c9e8f9}.voice-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.voice-controls button{min-height:50px}.secondary{border:1px solid #59758e;border-radius:11px;padding:12px 10px;background:#233a52;color:#f8fbff;font-weight:750}.secondary:disabled,.primary:disabled{opacity:.54;cursor:not-allowed}.voice-quote{line-height:1.6;padding:14px;border-left:3px solid #8be7da;background:#0b1b2d;border-radius:8px;font-size:.98rem}.safe{display:inline-block;border-radius:999px;border:1px solid #365d5a;padding:4px 9px;color:#91e3d5;font-size:.76rem;font-weight:700;margin-top:4px}
-    @media(max-width:560px){.offers-edit{grid-template-columns:repeat(2,minmax(0,1fr))}.offers-edit label:first-child{grid-column:1}.triple{grid-template-columns:1fr 1fr}.triple label:last-child{grid-column:1 / -1}.price{font-size:1rem}.shell{padding:18px 12px 40px}}
+    .pref-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pref-item{padding:12px;border:1px solid #3a516e;border-radius:10px;background:#0c1c30}.pref-item label{display:flex;flex-direction:row;align-items:center;gap:10px;font-size:.88rem}.pref-item input[type="checkbox"]{width:21px;height:21px;min-height:21px;accent-color:#69dfc9;flex-shrink:0}.pref-item select{margin-top:7px}.pref-hint{font-size:.77rem;color:#b4c8dd;margin-top:6px}.voice-result{margin-top:12px;border-radius:12px;padding:13px;border:1px solid #416681;background:#102c43;min-height:57px}.voice-state{font-size:.84rem;color:#c9e8f9}.voice-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.voice-controls button{min-height:50px}.secondary{border:1px solid #59758e;border-radius:11px;padding:12px 10px;background:#233a52;color:#f8fbff;font-weight:750}.secondary:disabled,.primary:disabled{opacity:.54;cursor:not-allowed}.voice-quote{line-height:1.6;padding:14px;border-left:3px solid #8be7da;background:#0b1b2d;border-radius:8px;font-size:.98rem}.safe{display:inline-block;border-radius:999px;border:1px solid #365d5a;padding:4px 9px;color:#91e3d5;font-size:.76rem;font-weight:700;margin-top:4px}
+    @media(max-width:560px){.pref-grid{grid-template-columns:1fr}.offers-edit{grid-template-columns:repeat(2,minmax(0,1fr))}.offers-edit label:first-child{grid-column:1}.triple{grid-template-columns:1fr 1fr}.triple label:last-child{grid-column:1 / -1}.price{font-size:1rem}.shell{padding:18px 12px 40px}}
     @media(max-width:350px){.grid{grid-template-columns:1fr}.triple{grid-template-columns:1fr}.triple label:last-child{grid-column:auto}.offer{grid-template-columns:20px minmax(0,1fr)}.price{grid-column:2;text-align:left}}
     @media(prefers-reduced-motion:reduce){.fill{transition:none}}
   </style>
 </head>
 <body>
 <main class="shell">
-  <div class="tag">MOBILITYHUB · MVP 03 · VOZ EXPERIMENTAL</div>
+  <div class="tag">MOBILITYHUB · MVP 3.2 · ASISTENTE CONFIGURABLE</div>
   <h1>Elegí mejor. Trabajá menos.</h1>
   <p class="sub">Probá el semáforo de rentabilidad, tu <strong>meta diaria</strong> y una <strong>recomendación por voz</strong>. Todas las ofertas y calificaciones son ficticias.</p>
   <span class="safe">Sin cuentas ni servidor de MobilityHub · Micrófono opcional</span>
@@ -123,17 +123,35 @@
   </section>
 
 
+  <section class="card" aria-labelledby="settingstitle" id="settingsPanel">
+    <h2 id="settingstitle">3. Configuración del asistente</h2>
+    <p class="guide">Elegí cómo recibir las recomendaciones. Las preferencias se guardan <strong>solo en este navegador</strong>, si permite almacenamiento local. Podés cambiarlas cuando quieras.</p>
+    <div class="pref-grid">
+      <div class="pref-item"><label for="outputMode">Modo de recomendaciones</label><select id="outputMode">
+        <option value="voice">Por voz y en pantalla</option><option value="screen">Solo en pantalla</option><option value="silent">Avisos silenciosos</option>
+      </select><p class="pref-hint">El audio siempre se inicia con un botón; no se escucha permanentemente.</p></div>
+      <div class="pref-item"><label for="passengerMode">Datos del pasajero</label><select id="passengerMode">
+        <option value="request">Leer solo cuando los pida por voz</option><option value="automatic">Leer automáticamente</option><option value="screen">Solo visibles en pantalla</option>
+      </select><p class="pref-hint">Calificación y cantidad de viajes, solo si están disponibles.</p></div>
+      <div class="pref-item"><label><input id="readPercent" type="checkbox" checked> Leer ventaja porcentual entre ofertas</label><p class="pref-hint">Se compara la rentabilidad por hora frente a la segunda mejor alternativa válida.</p></div>
+      <div class="pref-item"><label><input id="readAmounts" type="checkbox"> Leer importes en pesos</label><p class="pref-hint">Desactivado por privacidad cuando haya un pasajero cerca.</p></div>
+      <div class="pref-item"><label><input id="voiceConfirm" type="checkbox" checked> Permitir confirmar o descartar por voz</label><p class="pref-hint">Solo selecciona opciones ficticias; no acepta viajes reales.</p></div>
+    </div>
+    <p id="prefsStatus" class="guide" role="status" aria-live="polite">Preferencias iniciales aplicadas.</p>
+  </section>
+
   <section class="card" aria-labelledby="voicetitle">
-    <h2 id="voicetitle">3. Asistente de voz · Prueba de frases naturales (v3.1)</h2>
+    <h2 id="voicetitle">4. Asistente de voz · Voz y recomendaciones (v3.2)</h2>
     <p class="guide">La aplicación puede <strong>leer en voz alta</strong> la mejor oferta y, si tu navegador lo permite, reconocer respuestas breves. Probalo <strong>con el vehículo detenido</strong>.</p>
     <div id="spokenOffer" class="voice-quote" aria-live="polite">Preparando recomendación simulada…</div>
     <div class="voice-controls">
       <button class="primary" type="button" id="hearOffer">🔊 Escuchar recomendación</button>
       <button class="secondary" type="button" id="sayAnswer">🎙 Responder por voz</button>
       <button class="secondary" type="button" id="repeatOffer">↺ Repetir</button>
+      <button class="secondary" type="button" id="passengerInfo">★ Datos del pasajero</button>
       <button class="secondary" type="button" id="stopVoice">■ Detener audio</button>
     </div>
-    <div class="voice-result" role="status" aria-live="polite"><strong id="voiceStatus">Tocá «Escuchar recomendación» para comenzar.</strong><p id="voiceDetail" class="voice-state">Después podés decir «Sí, confirmo», «Quiero elegir ese viaje», «No» o «Repetir».</p><p id="voiceTranscript" class="voice-state" style="margin-top:10px">Última frase escuchada: ninguna todavía.</p></div>
+    <div class="voice-result" role="status" aria-live="polite"><strong id="voiceStatus">Tocá «Escuchar recomendación» para comenzar.</strong><p id="voiceDetail" class="voice-state">Después podés decir «Sí, confirmo», «No», «Repetir» o «Datos del pasajero».</p><p id="voiceTranscript" class="voice-state" style="margin-top:10px">Última frase escuchada: ninguna todavía.</p></div>
     <details style="margin-top:15px">
       <summary>Si el micrófono no funciona, probar respuestas manualmente</summary>
       <div class="button-row">
@@ -146,7 +164,7 @@
   </section>
 
   <section class="card" aria-labelledby="nexttitle">
-    <h2 id="nexttitle">4. Qué se comprobó y qué falta</h2>
+    <h2 id="nexttitle">5. Qué se comprobó y qué falta</h2>
     <p class="guide"><strong>Comprobado:</strong> fórmulas en pruebas con datos ficticios y funcionamiento de la primera versión en tu Android. La versión anterior sumó semáforo y proyección de horas. La voz hablada y el reconocimiento de una orden se probaron en Android usando HTTPS; ahora validamos más expresiones de respuesta.</p>
     <p class="guide"><strong>Pendiente:</strong> que un conductor real gane lo mismo en 9 horas, comprobar costos y tiempos reales, capturar ofertas y calificaciones reales de otras apps, probar variantes de órdenes de voz, confiabilidad en Android, permisos, seguridad y restricciones al conducir.</p>
     <div class="button-row"><button id="reset" type="button" class="ghost">Restablecer toda la simulación</button></div>
@@ -167,7 +185,10 @@ const passengers={
 };
 
 const initial={monthly:1200000,days:26,elapsed:3,earned:18000,costKm:250,occupancy:75,aPay:10000,aPick:1,aTrip:3,aMins:20,bPay:12000,bPick:3,bTrip:10,bMins:40,cPay:5500,cPick:2,cTrip:12,cMins:45};
-let winningOffer=null;let dailyGoal=null;
+let winningOffer=null;let dailyGoal=null;let secondOffer=null;
+const defaultPrefs={outputMode:'voice',passengerMode:'request',readPercent:true,readAmounts:false,voiceConfirm:true};
+const prefIds=Object.keys(defaultPrefs);
+const prefs={...defaultPrefs};
 const keys=Object.keys(initial);
 const read=(name)=>{const el=$(name);const s=el.value.trim().replace(',','.');return s===''?NaN:Number(s)};
 const valid=(name,min,max)=>{const n=read(name);return Number.isFinite(n)&&n>=min&&n<=max};
@@ -204,7 +225,7 @@ function updateOffers(){
  return {name:m.name,net,km,mins:read(m.id+'Mins'),hourly:net*60/read(m.id+'Mins')};
  });
  offers.sort((x,y)=>y.hourly-x.hourly);
- const top=offers[0];winningOffer=top.hourly>=minimum?top:null;
+ const top=offers[0];winningOffer=top.hourly>=minimum?top:null;secondOffer=offers[1]||null;
  const list=document.createDocumentFragment();
  for(const o of offers){const green=o===top&&o.hourly>=minimum;const yellow=o.hourly>=minimum&&!green;
  const color=green?'#16a34a':yellow?'#eab308':'#ef4444';
@@ -245,43 +266,89 @@ $('simulateTrip').addEventListener('click',()=>{
  $('simConfirmRemaining').textContent='Para tu meta diaria todavía faltan '+$('remainingMoney').textContent+'. Horas restantes al ritmo acumulado: '+$('timeLeft').textContent+'.';
  $('simConfirm').hidden=false;
 });
-$('reset').addEventListener('click',()=>{for(const k of keys)$(k).value=initial[k];$('simConfirm').hidden=true;$('simulateMessage').textContent='La simulación se restableció con los valores de ejemplo.';update();refreshVoiceText();});
+$('reset').addEventListener('click',()=>{for(const k of keys)$(k).value=initial[k];$('simConfirm').hidden=true;$('simulateMessage').textContent='La simulación se restableció con los valores de ejemplo.';loadPrefs();update();updatePrefs();refreshVoiceText();});
 // Voz: solo funciones nativas del navegador, ninguna conexión con las plataformas.
 const SpeechRecognitionAPI=window.SpeechRecognition||window.webkitSpeechRecognition;
 const synthesisAvailable=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let recognition=null;
 let recognitionActive=false;
+function relativeAdvantage(){
+ if(!winningOffer||!secondOffer||secondOffer.hourly<=0)return null;
+ const advantage=(winningOffer.hourly/secondOffer.hourly-1)*100;
+ return Number.isFinite(advantage)&&advantage>=0?advantage:null;
+}
+function passengerDescription(){
+ if(!winningOffer)return 'No hay un viaje recomendado del cual consultar datos.';
+ const p=passengers[winningOffer.name];
+ if(!p||!p.rating)return 'Los datos de calificación y cantidad de viajes del pasajero no están disponibles para esta oferta simulada.';
+ const count=p.trips==null?'La cantidad de viajes no está disponible.':'Registra '+p.trips+' viajes simulados.';
+ return 'Datos ficticios del pasajero de '+winningOffer.name+': calificación '+p.rating+' estrellas. '+count+' Una calificación no garantiza seguridad.';
+}
 function voiceOffer(){
- if(!winningOffer)return 'En este momento no hay ofertas que alcancen tu objetivo mínimo estimado de rentabilidad. No recomiendo ninguna.';
+ if(!winningOffer)return 'MobilityHub. Ninguna oferta alcanza tu objetivo mínimo. No recomiendo seleccionar un viaje.';
  const o=winningOffer;
- const p=passengers[o.name];
- let descriptor='La calificación del pasajero no está disponible en esta simulación.';
- if(p.rating){descriptor='Calificación ficticia del pasajero: '+p.rating+' estrellas.'+(p.trips?' Cantidad simulada: '+p.trips+' viajes.':'');}
- return 'MobilityHub. Recomiendo la oferta simulada de '+o.name+'. Ganancia neta estimada: '+Math.round(o.hourly).toLocaleString('es-AR')+' pesos por hora. El viaje dejaría '+Math.round(o.net).toLocaleString('es-AR')+' pesos en '+Math.round(o.mins)+' minutos. '+descriptor+' ¿Querés seleccionarla en esta simulación? Podés decir sí, quiero elegir ese viaje, no o repetir.';
+ let message='MobilityHub. La mejor opción simulada es '+o.name+'. ';
+ const advantage=relativeAdvantage();
+ if(prefs.readPercent){
+  message+=advantage!==null?'Tiene aproximadamente un '+Math.round(advantage)+' por ciento más de rentabilidad estimada por hora que la segunda opción. ':'No hay una segunda oferta con rentabilidad positiva para comparar porcentualmente. ';
+ }
+ if(prefs.readAmounts){message+='Ganancia neta estimada: '+Math.round(o.hourly).toLocaleString('es-AR')+' pesos por hora. '}
+ if(prefs.passengerMode==='automatic')message+=passengerDescription()+' ';
+ if(prefs.voiceConfirm)message+='¿Querés seleccionarla en esta simulación?';
+ return message.trim();
+}
+function loadPrefs(){
+ try{const saved=JSON.parse(localStorage.getItem('mobilityhub-v32-prefs')||'null');if(saved&&typeof saved==='object')for(const k of prefIds){if(typeof saved[k]===typeof defaultPrefs[k] && (k!=='outputMode'||['voice','screen','silent'].includes(saved[k]))&&(k!=='passengerMode'||['request','automatic','screen'].includes(saved[k])))prefs[k]=saved[k]}}
+ catch(e){}
+ for(const k of prefIds){const el=$(k);if(el.type==='checkbox')el.checked=prefs[k];else el.value=prefs[k];}
+}
+function updatePrefs(){
+ for(const k of prefIds){const el=$(k);prefs[k]=el.type==='checkbox'?el.checked:el.value;}
+ try{localStorage.setItem('mobilityhub-v32-prefs',JSON.stringify(prefs));$('prefsStatus').textContent='✓ Preferencias guardadas en este navegador.';}catch(e){$('prefsStatus').textContent='Preferencias aplicadas a esta sesión; el navegador no permitió guardarlas.';}
+ stopSound();
+ $('hearOffer').disabled=!synthesisAvailable||prefs.outputMode!=='voice';
+ $('repeatOffer').disabled=!synthesisAvailable||prefs.outputMode!=='voice';
+ $('passengerInfo').disabled=prefs.passengerMode==='screen';
+ $('sayAnswer').disabled=!SpeechRecognitionAPI||!prefs.voiceConfirm;
+ refreshVoiceText();
 }
 function refreshVoiceText(){
  $('spokenOffer').textContent=voiceOffer();
 }
 function setVoiceStatus(main,detail){$('voiceStatus').textContent=main;$('voiceDetail').textContent=detail||'';}
 function stopSound(){if(synthesisAvailable)window.speechSynthesis.cancel();}
-function speakOffer(){
- refreshVoiceText();
- if(!synthesisAvailable){setVoiceStatus('Audio no disponible en este navegador.','Podés leer la recomendación y probar los botones de respuesta simulada.');return;}
+function speakText(message){
+ if(prefs.outputMode!=='voice'){setVoiceStatus('Audio desactivado en configuración.','La recomendación está disponible en pantalla.');return;}
+ if(!synthesisAvailable){setVoiceStatus('Audio no disponible.','Probá desde Chrome en Android.');return;}
  stopSound();
- const utter=new SpeechSynthesisUtterance(voiceOffer());
+ const utter=new SpeechSynthesisUtterance(message);
  utter.lang='es-AR';utter.rate=0.96;utter.pitch=1;
  const available=window.speechSynthesis.getVoices();
  const esVoice=available.find(v=>v.lang.toLowerCase()==='es-ar')||available.find(v=>v.lang.toLowerCase().startsWith('es'));
  if(esVoice)utter.voice=esVoice;
- utter.onstart=()=>setVoiceStatus('Reproduciendo recomendación hablada…','Cuando termine, podés probar «Responder por voz».');
- utter.onend=()=>setVoiceStatus('Terminó la recomendación.','Tocá «Responder por voz» y decí «Quiero elegir ese viaje», «Sí, confirmo», «No» o «Repetir».');
- utter.onerror=()=>setVoiceStatus('Tu navegador no pudo reproducir el audio.','Usá el texto visible o probá el audio desde Chrome.');
- try{window.speechSynthesis.speak(utter);setVoiceStatus('Iniciando audio…','Si Chrome no reproduce sonido, comprobá el volumen multimedia.');}
- catch(e){setVoiceStatus('No se pudo iniciar el audio.','Probá con Chrome y el volumen multimedia activado.');}
+ utter.onstart=()=>setVoiceStatus('Reproduciendo audio…','Información simulada.');
+ utter.onend=()=>setVoiceStatus('Terminó el audio.','Podés dar una orden breve o consultar los datos en pantalla.');
+ utter.onerror=()=>setVoiceStatus('No se pudo reproducir el audio.','Probá desde Chrome en Android.');
+ try{window.speechSynthesis.speak(utter);}catch(e){setVoiceStatus('No se pudo iniciar el audio.','Revisá el volumen y los permisos del navegador.');}
+}
+function speakOffer(){
+ refreshVoiceText();
+ speakText(voiceOffer());
+}
+function givePassengerInfo(){
+ if(prefs.passengerMode==='screen'){
+  setVoiceStatus('Información del pasajero solo en pantalla.','Podés revisar los datos ficticios debajo de cada oferta.');return;
+ }
+ if(prefs.outputMode!=='voice'){
+  setVoiceStatus('Datos del pasajero (texto).',passengerDescription());return;
+ }
+ speakText(passengerDescription());
 }
 function answer(action,origin){
  const label=origin==='voz'?'Respuesta reconocida por voz':'Respuesta de prueba manual';
+ if(action==='passenger'){givePassengerInfo();return;}
  if(action==='repeat'){setVoiceStatus(label+': repetir.','Volveré a leer la recomendación.');speakOffer();return;}
+ if((action==='yes'||action==='no')&&!prefs.voiceConfirm&&origin==='voz'){setVoiceStatus('Confirmaciones por voz desactivadas.','Podés cambiarlo desde Configuración del asistente.');return;}
  if(action==='yes'){
    if(winningOffer){setVoiceStatus(label+': sí, confirmo.','SELECCIÓN SIMULADA: '+winningOffer.name+'. No se abrió otra app ni se aceptó viaje real. Para registrar ganancias ficticias usá el botón «Simular completar la mejor oferta».');}
    else{setVoiceStatus('No hay oferta recomendada.','Ninguna oferta supera el umbral mínimo actual.');}
@@ -294,6 +361,7 @@ function interpret(phrase){
    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
    .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
  if(!clean)return 'other';
+ if(/\b(datos|informacion|calificacion|estrellas|reputacion|pasajero|cuantos viajes|cantidad de viajes)\b/.test(clean))return 'passenger';
  // Prioridad a las negaciones para no aprobar accidentalmente "no quiero".
  if(/\b(no|nunca|jamas)\b/.test(clean) ||
     /\b(cancelar|cancela|descartar|descarta|rechazar|rechazo|no gracias|mejor no)\b/.test(clean))return 'no';
@@ -305,6 +373,7 @@ function interpret(phrase){
  return 'other';
 }
 function beginRecognition(){
+ if(!prefs.voiceConfirm){setVoiceStatus('Respuestas por voz desactivadas.','Activá esta opción desde Configuración del asistente.');return;}
  if(!SpeechRecognitionAPI){setVoiceStatus('Reconocimiento de voz no disponible aquí.','Chrome puede requerir que la aplicación se publique en una página segura HTTPS. Usá las respuestas manuales por ahora.');return;}
  if(recognitionActive){setVoiceStatus('El micrófono ya está escuchando.','Decí «Quiero elegir ese viaje», «Sí, confirmo», «No» o «Repetir».');return;}
  stopSound();
@@ -323,6 +392,8 @@ function beginRecognition(){
 }
 $('hearOffer').addEventListener('click',speakOffer);
 $('repeatOffer').addEventListener('click',speakOffer);
+$('passengerInfo').addEventListener('click',givePassengerInfo);
+prefIds.forEach(k=>$(k).addEventListener('change',updatePrefs));
 $('sayAnswer').addEventListener('click',beginRecognition);
 $('fakeYes').addEventListener('click',()=>answer('yes','manual'));
 $('fakeNo').addEventListener('click',()=>answer('no','manual'));
@@ -330,7 +401,7 @@ $('stopVoice').addEventListener('click',()=>{stopSound();if(recognitionActive&&r
 keys.forEach(k=>{$(k).addEventListener('input',()=>{refreshVoiceText();});});
 if(!synthesisAvailable){$('hearOffer').disabled=true;$('repeatOffer').disabled=true;}
 if(!SpeechRecognitionAPI){$('sayAnswer').disabled=true;$('sayAnswer').title='Este navegador no ofrece reconocimiento de voz; probá los botones manuales.';}
-update();refreshVoiceText();
+loadPrefs();update();updatePrefs();refreshVoiceText();
 })();
 </script>
 </body>
